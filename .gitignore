@@ -1,5 +1,21 @@
+# 依赖
 node_modules/
+
+# 本机 pi agent 工作区（含 devloop 适配面、会话/状态），不入库
+.pi/
+
+# 本机黑板运行状态（仅忽略仓库根；demo/ 下的 config 是夹具，需入库）
 /.cairn/
+
+# 本机环境与密钥
+.env
+.env.*
+*.pem
+*.key
+
+# 运行产物
+dist/
+coverage/
+*.log
 *.tmp
 .DS_Store
-dist/

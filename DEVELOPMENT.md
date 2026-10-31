@@ -4,7 +4,7 @@
 
 ## 1. 开工前
 
-1. 加载技能 `dev-loop`，读 [`.pi/devloop.md`](.pi/devloop.md)
+1. 加载技能 `dev-loop`，读本地的 `.pi/devloop.md`（**不入库**；没有就按 `AGENTS.md` 的表自建）
 2. 判断改动分级（S / M / L），按该档的必做项走
 3. 给出范围声明：**要改** / **不改** / **不动但已注意到**
 4. 写变更包 `docs/plans/YYYY-MM-DD-<主题>.md`，完成后追加 `docs/Log.md`
