@@ -40,6 +40,15 @@ describe("runCommand", () => {
     const result = await runCommand({ cwd: dir, cmd: "sleep 5", timeoutMs: 200 });
     expect(result.exit).toBe(124);
   });
+
+  it("超时后立刻返回，不被子进程拖住（回归：整组杀）", async () => {
+    const started = Date.now();
+    const result = await runCommand({ cwd: dir, cmd: "sleep 5", timeoutMs: 200 });
+    const elapsed = Date.now() - started;
+    expect(result.exit).toBe(124);
+    // 只杀 shell 时，孙进程会拖住 stdio，这里会等满 5s。给 2s 余量。
+    expect(elapsed).toBeLessThan(2000);
+  });
 });
 
 describe("validateEvidence（复核第 1、2 层）", () => {

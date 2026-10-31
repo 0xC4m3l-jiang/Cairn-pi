@@ -41,7 +41,14 @@ export function runCommand(options: RunOptions): Promise<EvidenceLevel> {
 
     let child: ReturnType<typeof spawn>;
     try {
-      child = spawn(cmd, { cwd, shell: true, stdio: ["ignore", "pipe", "pipe"] });
+      // POSIX 上给子进程开独立进程组：超时时才能整组杀掉。
+      // 只杀 shell 的话，孙进程（如 sleep）会存活并拖住 stdio，'close' 迟迟不来。
+      child = spawn(cmd, {
+        cwd,
+        shell: true,
+        stdio: ["ignore", "pipe", "pipe"],
+        detached: process.platform !== "win32",
+      });
     } catch (error) {
       finish({ cmd, exit: 127, excerpt: `spawn 失败：${(error as Error).message}` });
       return;
@@ -49,10 +56,23 @@ export function runCommand(options: RunOptions): Promise<EvidenceLevel> {
 
     let stdout = "";
     let stderr = "";
-    let timedOut = false;
+    const tail = (): string => {
+      const combined = `${stdout}${stderr}`.trim();
+      return combined.split("\n").slice(-EXCERPT_LINES).join("\n").trim();
+    };
+
     const timer = setTimeout(() => {
-      timedOut = true;
-      child.kill("SIGKILL");
+      // 杀掉整个进程组，不只 shell；然后直接给 124，不等 'close'。
+      try {
+        if (child.pid !== undefined && process.platform !== "win32") {
+          process.kill(-child.pid, "SIGKILL");
+        } else {
+          child.kill("SIGKILL");
+        }
+      } catch {
+        child.kill("SIGKILL");
+      }
+      finish({ cmd, exit: 124, excerpt: tail() || "超时被终止（无输出）" });
     }, timeoutMs);
 
     child.stdout?.on("data", (chunk: Buffer | string) => {
@@ -67,9 +87,7 @@ export function runCommand(options: RunOptions): Promise<EvidenceLevel> {
     });
     child.on("close", (code: number | null) => {
       clearTimeout(timer);
-      const combined = `${stdout}${stderr}`.trim();
-      const excerpt = combined.split("\n").slice(-EXCERPT_LINES).join("\n").trim();
-      finish({ cmd, exit: timedOut ? 124 : (code ?? 1), excerpt: excerpt || "(无输出)" });
+      finish({ cmd, exit: code ?? 1, excerpt: tail() || "(无输出)" });
     });
   });
 }
