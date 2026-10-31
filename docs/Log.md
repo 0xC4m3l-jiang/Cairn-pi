@@ -7,6 +7,18 @@
 
 ---
 
+## 2026-10-31 · 发布到 GitHub：CI + 超时 bug 修复 + LICENSE
+
+**做了什么**：仓库公开到 `github.com/0xC4m3l-jiang/Cairn-pi`；新增 GitHub Actions verify 工作流（node 20/22 矩阵）；修 `runCommand` 超时只杀 shell 导致孙进程拖住 stdio 的真 bug；补 MIT LICENSE；修 `.gitignore` 漏掉 demo 夹具、清理 3 份文档的本机绝对路径。
+**改了哪些文件**：`.github/workflows/verify.yml`（新增）· `LICENSE`（新增）· `lib/verify.ts` · `tests/verify.test.ts` · `.gitignore` · `README.md` · `DEVELOPMENT.md` · `docs/cairn-{architecture,core-dispatch}.md`
+**对应文档**：`docs/plans/2026-10-31-发布与CI.md`
+**验证**：`npm run verify` 通过（typecheck 0 错误；测试 87/87，新增 1 例超时回归）。CI run 41173262131：node 20 与 node 22 双绿。
+**证据**：`git ls-remote origin main` 与本机 HEAD 一致 · 仓库 `"private": false`、默认分支 `main` · 干净副本 `npm ci` + `verify` 86/86 · README 内部链接 8/8 无断链。
+**定位方式**：GitHub workflow logs 需认证（403），改用 `::error::` 写入 check-run annotations（公开仓库可匿名读）定位到 `tests/verify.test.ts > runCommand > 超时记为 124`。
+**没做 / 遗留**：仓库 description / topics 未设置（本机无 `gh`、无 API token）· `docs/plans/2026-10-31-完整实现.md:139` 仍含绝对路径（历史记录，不改）。
+
+---
+
 ## 2026-10-31 · README 收敛为单一最新对比
 
 **做了什么**：README 只保留最新一轮（高难任务 + 修复后）的对比数据，删除简单任务、复杂任务、修复前后对比三节；完整历史仍在 `demo/RESULTS.md`。
