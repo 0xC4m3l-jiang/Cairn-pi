@@ -5,6 +5,8 @@
 
 [![Pi extension](https://img.shields.io/badge/Pi-extension-blue)](https://pi.dev)
 [![Pi skills](https://img.shields.io/badge/Pi-skills-blueviolet)](https://pi.dev)
+[![verify](https://github.com/0xC4m3l-jiang/Cairn-pi/actions/workflows/verify.yml/badge.svg)](https://github.com/0xC4m3l-jiang/Cairn-pi/actions/workflows/verify.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## 解决什么
 
