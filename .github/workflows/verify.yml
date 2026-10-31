@@ -30,5 +30,8 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Verify (tsc --noEmit + vitest run)
-        run: npm run verify
+      - name: Typecheck (tsc --noEmit)
+        run: npm run typecheck
+
+      - name: Test (vitest run)
+        run: npm test
