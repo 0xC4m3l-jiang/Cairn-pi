@@ -18,9 +18,11 @@
     "lib",
     "skills",
     "docs",
+    "demo",
     "README.md",
     "DESIGN.md",
-    "DEVELOPMENT.md"
+    "DEVELOPMENT.md",
+    "LICENSE"
   ],
   "pi": {
     "extensions": [

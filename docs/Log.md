@@ -7,6 +7,17 @@
 
 ---
 
+## 2026-10-31 · 安装可用性验证
+
+**做了什么**：按外部用户视角走一遍「克隆 → 装进 pi → 立刻能用」，暴露并修掉 4 个问题：README 安装命令指向未发布的 npm 包、README 残留「M5 前不可用」、`files` 漏 `LICENSE` 与 `demo/`（装后 `verify` 会失败）、`-p` 模式斜杠命令置于首位会吞掉后续指令。
+**改了哪些文件**：`README.md`（安装章节重写 + 「装完先自检」+ `-p` 陷阱 + 包结构补 `demo/`）· `package.json`（`files` 补 `demo`、`LICENSE`）
+**对应文档**：`docs/plans/2026-10-31-安装可用性.md`
+**验证**：`npm run verify` 通过（vitest 87/87 + demo 12/12）。`npm pack` 产物 75 文件 / 104 kB，解包后 `demo` 测试 12/12。
+**证据**：`pi install git:github.com/0xC4m3l-jiang/Cairn-pi` 成功写入 settings 并克隆到 `~/.pi/agent/git/...`（含 `skills/` 与 `node_modules`）；已安装包（不带 `-e`）`/cairn init`、`/cairn status` 正常；端到端跑通 claim → submit → verify → integrate，`n01:done`、`integrate module=0`、`npm test` 1/1；`pi install <本地路径> -l` 写项目级 `.pi/settings.json` 成功。
+**没做 / 遗留**：未发布 npm（`pi install npm:cairn-pi` 仍不可用）· 端到端只跑单节点 trivial 需求 · `pi install` 会带 `node_modules`（约 82 目录），略重。
+
+---
+
 ## 2026-10-31 · 复核结论并修正 README 的现实效果
 
 **做了什么**：README 的质量结论基于单次运行，后续 token 实测产生了第 2 次运行产出。对两次产出逐项重测后，发现第 1 次「cairn 更优」的代码级差异在第 2 次**反转或消失**。据此重写 README 对比章节：拆成「稳定差异（成本 / 结构性证据链）」「不稳定差异（代码质量）」，并删除错误指标。

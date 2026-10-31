@@ -50,25 +50,60 @@ flowchart LR
 
 ## 安装
 
-```bash
-pi install npm:cairn-pi
-```
-
-不长期安装、只试一次：
+包**尚未发布到 npm**，从 GitHub 安装（会同时装上扩展和 3 个技能）：
 
 ```bash
-pi -e npm:cairn-pi
+pi install git:github.com/0xC4m3l-jiang/Cairn-pi
 ```
 
-本地开发时指向包目录（**M5 前不可用**：`extensions/` 与 `skills/` 尚未创建，见 `DEVELOPMENT.md` §5 里程碑）：
+只装到当前项目，不影响全局（写入 `.pi/settings.json`）：
 
 ```bash
-pi -e ./cairn-pi
+pi install git:github.com/0xC4m3l-jiang/Cairn-pi -l
 ```
 
-Pi 扩展以 Pi 的权限运行。只从可信来源安装。
+只想试一下、不改任何配置（**只加载扩展入口，技能不生效**）：
+
+```bash
+git clone https://github.com/0xC4m3l-jiang/Cairn-pi
+pi -e ./Cairn-pi
+```
+
+确认装好了：
+
+```bash
+pi list | grep -i cairn
+# → git:github.com/0xC4m3l-jiang/Cairn-pi
+```
+
+卸载：
+
+```bash
+pi remove git:github.com/0xC4m3l-jiang/Cairn-pi
+```
+
+> 区别：`pi install` 注册整个包（扩展 + `skills/`），`-e` 只加载扩展入口。
+> `/cairn` 命令两种方式都能用；但「需求 → 节点图」的编排依赖技能，必须用 `pi install`。
+
+不需要 `npm install`——宿主 pi 已提供 `typebox` 等 peer 依赖。
+Pi 扩展以 Pi 的权限运行，只从可信来源安装。
+
+### 装完先自检
+
+在一个空目录里试一条命令，能看到「黑板已建立」就说明扩展加载成功：
+
+```bash
+mkdir -p /tmp/cairn-smoke && cd /tmp/cairn-smoke
+pi -p "/cairn init --goal \"试跑\""
+# → 黑板已建立：/tmp/cairn-smoke/.cairn/board.json
+```
+
+> **`-p` 模式的坑**：斜杠命令放在 payload 最前面时，后面的文字会被当成命令参数吃掉。
+> 要一次下达多条指令，把自然语言写在前面，`/cairn ...` 放最后。
 
 ## 快速开始
+
+> 在**目标项目的根目录**执行；`.cairn/board.json` 会写在当前目录。
 
 ```text
 /cairn init --goal "登录支持 magic link"
@@ -126,6 +161,7 @@ cairn-pi/
 ├── lib/                      # 纯函数层，可脱离 pi 单测
 ├── skills/                   # cairn-map / cairn-execute / cairn-integrate
 ├── docs/                     # 设计文档与 Cairn 架构提取
+├── demo/                     # A/B 对比实验与 token 统计工具
 └── tests/
 ```
 
