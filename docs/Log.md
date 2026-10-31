@@ -7,6 +7,18 @@
 
 ---
 
+## 2026-10-31 · Token 消耗实测 + 测量工具测试
+
+**做了什么**：新增 `demo/token-usage.mjs`（从 pi session JSONL 累计 input/output/cacheRead/total/cost）与 12 例单测，接进 `npm run verify`；6 个 run 脚本改用 `--session-dir` 隔离会话并自动打印用量；在「复杂（4 模块）」与「高难（5 模块）」两个需求上各跑两条路线，量化 token 差异。
+**改了哪些文件**：`demo/token-usage.mjs`（新增）· `demo/token-usage.test.mjs`（新增）· `demo/run-{baseline,cairn,complex-baseline,complex-cairn,hard-baseline,hard-cairn}.sh` · `package.json` · `README.md` · `demo/RESULTS.md` · `demo/README.md`
+**对应文档**：`docs/plans/2026-10-31-token消耗实测.md`
+**验证**：`npm run verify` 通过（typecheck 0 错误；vitest 87/87；demo 单测 12/12）。
+**证据**：复杂任务 610,765 → 1,562,474 tokens（**2.56×**），$0.1734 → $0.3436（**1.98×**）；高难任务 227,250 → 2,045,252（**9.00×**），$0.1085 → $0.4765（**4.39×**）。增量集中在 `cacheRead`（占 cairn 总量 80%–96%）；约 39–41 万 tokens/节点，随节点数线性增长。同批复测正确性：复杂 15/15、高难 25/25、高难 cairn 探针 12/12。
+**修掉的 bug**：`mergeSummaries` 把已累加计数器当原始 usage 再取 `.cost.total`，导致成本恒为 0；引入 `costOf()` 兼容两种形态并加 2 条回归测试。
+**没做 / 遗留**：每组 1 次不声称统计显著 · 只测 deepseek-v4-pro，换模型倍率会变 · 高难 9× 主要受「原生 pi 只用 7 条消息一次成型」影响，不是固定倍率 · 未单列 `reasoning`。
+
+---
+
 ## 2026-10-31 · 发布到 GitHub：CI + 超时 bug 修复 + LICENSE
 
 **做了什么**：仓库公开到 `github.com/0xC4m3l-jiang/Cairn-pi`；新增 GitHub Actions verify 工作流（node 20/22 矩阵）；修 `runCommand` 超时只杀 shell 导致孙进程拖住 stdio 的真 bug；补 MIT LICENSE；修 `.gitignore` 漏掉 demo 夹具、清理 3 份文档的本机绝对路径。

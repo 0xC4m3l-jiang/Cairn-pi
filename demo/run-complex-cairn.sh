@@ -4,8 +4,10 @@ set -uo pipefail
 
 PKG="$(cd "$(dirname "$0")/.." && pwd)"
 WORK=/tmp/cairn-demo-complex-treatment
+SESS=/tmp/cairn-demo-complex-treatment-sessions   # 单独存放本轮的 pi session，用于统计 token
 
 rm -rf "$WORK" "$WORK.pristine"
+rm -rf "$SESS"
 cp -R "$PKG/demo/requirement-complex" "$WORK"
 cp -R "$WORK" "$WORK.pristine"
 
@@ -17,7 +19,7 @@ PROMPT="$(cat "$PKG/demo/requirement-complex/REQ.md")
 3) 全部完成后 /cairn integrate 和 /cairn report，然后停止"
 
 START=$(date +%s)
-( cd "$WORK" && env -u PI_PACKAGE_DIR pi -e "$PKG" -p "$PROMPT" )
+( cd "$WORK" && env -u PI_PACKAGE_DIR pi --session-dir "$SESS" -e "$PKG" -p "$PROMPT" )
 END=$(date +%s)
 
 echo "── B 组（cairn-pi，复杂任务）──"
@@ -39,3 +41,5 @@ if [ -f "$WORK/.cairn/board.json" ]; then
 else
   echo "无 board.json"
 fi
+echo "── token 用量 ──"
+node "$PKG/demo/token-usage.mjs" "$SESS" --label="B cairn-pi（复杂）"

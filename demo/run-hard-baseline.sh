@@ -4,13 +4,15 @@ set -uo pipefail
 
 PKG="$(cd "$(dirname "$0")/.." && pwd)"
 WORK=/tmp/cairn-hard-baseline
+SESS=/tmp/cairn-hard-baseline-sessions   # 单独存放本轮的 pi session，用于统计 token
 
 rm -rf "$WORK" "$WORK.pristine"
+rm -rf "$SESS"
 cp -R "$PKG/demo/requirement-hard" "$WORK"
 cp -R "$WORK" "$WORK.pristine"
 
 START=$(date +%s)
-( cd "$WORK" && env -u PI_PACKAGE_DIR pi -p "$(cat "$PKG/demo/requirement-hard/REQ.md")" )
+( cd "$WORK" && env -u PI_PACKAGE_DIR pi --session-dir "$SESS" -p "$(cat "$PKG/demo/requirement-hard/REQ.md")" )
 END=$(date +%s)
 
 echo "── A 组（原生 pi，高难任务）──"
@@ -23,3 +25,5 @@ echo "── 测试文件指纹 ──"
 md5 -q "$WORK.pristine/tests/"*.test.mjs "$WORK/tests/"*.test.mjs 2>/dev/null || true
 echo "── 代码行数 ──"
 wc -l "$WORK/src/"*.mjs 2>/dev/null || true
+echo "── token 用量 ──"
+node "$PKG/demo/token-usage.mjs" "$SESS" --label="A 原生 pi（高难）"

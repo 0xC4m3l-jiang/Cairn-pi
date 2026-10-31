@@ -7,7 +7,7 @@
 ### 结果总览
 
 | 指标 | A 组（原生 pi） | B 组（cairn-pi） | 差异 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | M1 `npm test` | exit 0，6 pass / 0 fail | exit 0，6 pass / 0 fail | 平 |
 | M2 范围控制 | 只改 `src/todo.mjs`；测试 md5 未变 | 只改 `src/todo.mjs`（另加 `.cairn/`）；测试 md5 未变 | 平 |
 | M3 需求覆盖 | R1/R2/R3 共 6 条全绿 | 同左 | 平 |
@@ -27,7 +27,7 @@
 ### 结果总览
 
 | 指标 | A 组（原生 pi） | B 组（cairn-pi） | 差异 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | M1 `npm test` | exit 0，15 pass / 0 fail | exit 0，15 pass / 0 fail | 平 |
 | M2 范围控制 | 只改 `src/` 4 文件；测试 md5 未变 | 只改 `src/` 4 文件 + `.cairn/board.json`；测试 md5 未变 | 平 |
 | M3 需求覆盖 | R1–R4 共 15 条全绿 | 同左 | 平 |
@@ -47,7 +47,7 @@ integrate: module=0
 ### B 组的追溯矩阵（`/cairn report` 实际输出）
 
 | 模块 | 节点 | 状态 | 验收 | 证据 |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | books | n01 createBooks 图书建档/查询/可借状态 | done | unit ✓ acceptance ✓ | `node --test …` → exit 0 |
 | members | n02 createMembers 会员建档/查询 | done | unit ✓ acceptance ✓ | `node --test …` → exit 0 |
 | loans | n03 createLoans 借书/还书 | done | unit ✓ acceptance ✓ | `node --test …` → exit 0 |
@@ -71,7 +71,7 @@ integrate: module=0
 ### 结果总览
 
 | 指标 | A 组（原生 pi） | B 组（cairn-pi） | 差异 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | M1 `npm test` | exit 0，25/25 | exit 0，25/25 | 平 |
 | M2 范围控制 | ⚠️ `src/` 5 文件 + 额外 `docs/Log.md`（超范围） | `src/` 5 文件 + `.cairn/board.json`（协议产物） | B 胜 |
 | M3 需求覆盖 | 25 条全绿 | 25 条全绿 | 平 |
@@ -86,7 +86,7 @@ integrate: module=0
 ### 隐藏探针结果
 
 | 组 | 通过 | 失败项 |
-|---|---|---|
+| --- | --- | --- |
 | 参考实现（公平性验证） | 11/11 | —— |
 | A 组（原生 pi） | 11/11 | —— |
 | B 组（cairn-pi） | 10/11 | **P11 未知 sku 必须返回数字 0（含原型链上的键）** |
@@ -106,7 +106,7 @@ R2 明写「未知 `sku` 返回 `0`」。B 组 25 条给定测试全绿、5 个�
 解盲映射：`alpha = cairn-pi`，`beta = 原生 pi`。
 
 | 维度 | cairn-pi | 原生 pi | 依据 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | D1 边界与错误处理 | 3 | 4 | cairn 普通对象 → 原型链洞；原生用 `Map` |
 | D2 状态不变量保护 | 3 | 4 | 原生先落事件再改投影；cairn 反序 |
 | D3 跨模块接缝 | 3 | 4 | cairn `byType` 依赖 `this`，解构即崩 |
@@ -149,7 +149,7 @@ orders.getOrder(1).status = "HACKED";   // 内部状态被污染
 **② 链路逻辑**（最实质的差异）：
 
 | 链路 | 原生 pi | cairn-pi |
-|---|---|---|
+| --- | --- | --- |
 | inventory 写操作 | 先 append 后改 Map ✅ | 同 ✅ |
 | `orders.cancelOrder` | release → 改 status → 最后 append ❌ | append → 改 status → release ✅ |
 | 取消事件载荷 | `{id}`（无法重建） | `{id,sku,qty,key}` ✅ |
@@ -160,7 +160,7 @@ orders.getOrder(1).status = "HACKED";   // 内部状态被污染
 **③ 函数规范**：
 
 | 项 | 原生 pi | cairn-pi |
-|---|---|---|
+| --- | --- | --- |
 | `placeOrder()` 无参 | `TypeError` | 业务错误 ✅ |
 | 公开 API 返回副本 | 部分 | 全部 ✅ |
 | `levels()` 副本实现 | 普通 `{}` | `Object.create(null)` ✅ |
@@ -188,7 +188,7 @@ cairn-pi : stock("__proto__") = 5，levels() 保留，summary().totalStock = 14 
 **修复内容**：
 
 | 修改 | 文件 | 作用 |
-|---|---|---|
+| --- | --- | --- |
 | 新增 `probe` 验收级别 + `{probes}` 占位符 | `lib/contracts.ts`、`lib/verify.ts`、`lib/gates.ts`、`lib/coverage.ts` | 节点必须声明并写出规格探针；空则判 fail |
 | 新增工程约定注入 | `lib/conventions.ts`、`extensions/cairn.ts` | 9 条硬约定（Map / 返回副本 / 禁 `this` / 事件先落库 / 边界枚举含原型链键）进每个节点 brief |
 | 强制「需求→断言」步骤 | `skills/cairn-map`、`skills/cairn-execute` | `acceptance` 逐条列举 + `probes` 声明，不给反例不算完成 |
@@ -196,7 +196,7 @@ cairn-pi : stock("__proto__") = 5，levels() 保留，summary().totalStock = 14 
 **复测结果**：
 
 | 指标 | 修复前 cairn-pi | 修复后 cairn-pi | 原生 pi |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 给定测试 | 25/25 | 25/25 | 25/25 |
 | 隐藏探针（12 条） | 10/11 | **12/12** | 11/12 |
 | `stock("toString")` | `Function`（违规） | **`0`** | `0` |
@@ -220,10 +220,46 @@ cairn-pi : stock("__proto__") = 5，levels() 保留，summary().totalStock = 14 
 
 **结论修正**：修复前写的是「cairn-pi 买到的是审计链，不是更好的代码」。修复后该结论**不再成立**——把工程约定与规格探针变成不可跳过的步骤后，cairn-pi 确实产出了更好的代码。代价是 4.5 倍耗时，且前提是「你先把约定写进包」。
 
+## 实验四 · Token 消耗（同一需求，两条路线）
+
+指标：每轮用 `--session-dir` 隔离 pi 会话，从 session JSONL 累计每条 assistant 消息的 `usage`
+（[`token-usage.mjs`](token-usage.mjs)；按消息 id 去重，坏行计入 malformed）。同一需求、同一模型各跑一次。
+
+### 结果
+
+| 任务 | 组 | input | output | cacheRead | total | 成本 | 消息 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 复杂（4 模块 / 15 用例） | 原生 pi | 26,474 | 12,771 | 571,520 | 610,765 | $0.173 | 19 |
+| 复杂（4 模块 / 15 用例） | cairn-pi | 39,887 | 16,027 | 1,506,560 | 1,562,474 | $0.344 | 34 |
+| 复杂（倍率） | **B/A** | 1.51× | 1.26× | 2.64× | **2.56×** | **1.98×** | 1.79× |
+| 高难（5 模块 / 25 用例） | 原生 pi | 24,633 | 10,873 | 191,744 | 227,250 | $0.109 | 7 |
+| 高难（5 模块 / 25 用例） | cairn-pi | 46,836 | 31,568 | 1,966,848 | 2,045,252 | $0.477 | 37 |
+| 高难（倍率） | **B/A** | 1.90× | 2.90× | 10.26× | **9.00×** | **4.39×** | 5.29× |
+
+### 观察
+
+1. **增量集中在 `cacheRead`**：占 cairn-pi 总量的 80%（复杂）到 96%（高难）。输出 token 只涨 1.26–2.90 倍，真正的成本来自「同一段上下文被反复读取」。
+2. **成本随节点数线性增长**：cairn-pi 约 39–41 万 tokens / 节点（4 节点 → 156 万；5 节点 → 205 万）。可用 `≈ 40 万 × 节点数` 预估。
+3. **倍率取决于原生 pi 的往返次数**：高难任务上原生 pi 一次成型（7 条消息），cairn-pi 的固定开销被放大到 9 倍；复杂任务上原生 pi 用了 19 条消息，差距缩到 2.56 倍。
+
+### 正确性复核（本轮同时进行）
+
+| 组 | 给定测试 | 隐藏探针 |
+| --- | --- | --- |
+| 复杂 · 原生 pi | 15/15 | —— |
+| 复杂 · cairn-pi | 15/15 | —— |
+| 高难 · 原生 pi | 25/25 | —— |
+| 高难 · cairn-pi | 25/25 | 12/12 |
+
+### 结论（Token）
+
+cairn-pi 的 token 溢价 **2.5–9 倍**、成本溢价 **2–4.4 倍**，且随节点数线性增长。
+它换来的是逐条证据链与可恢复进度；若不需要这两样，纯 token 成本上原生 pi 明显更省。
+
 ## 综合结论与选型
 
 | 场景 | 建议 |
-|---|---|
+| --- | --- |
 | 单文件小改动、一次性任务 | **不用**。原生 pi 快得多 |
 | 多模块需求、要写对代码 | 用。修复后盲评 36.5 vs 23 |
 | 需要交接 / 审计 / 回溯某条需求的证据 | 用。这是它唯一不能替代的能力 |
@@ -245,6 +281,10 @@ bash run-complex-cairn.sh
 # 高难任务
 bash run-hard-baseline.sh
 bash run-hard-cairn.sh
+
+# Token 统计（对任意 session 目录）
+node token-usage.mjs /tmp/cairn-hard-baseline-sessions --label="A"
+node token-usage.mjs /tmp/cairn-hard-treatment-sessions --label="B" --json
 ```
 
 > 注意：若 `pi` 启动报 `ENOENT …theme/dark.json`，说明环境变量 `PI_PACKAGE_DIR` 指向残缺目录。

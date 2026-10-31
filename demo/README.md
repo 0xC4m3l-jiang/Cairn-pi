@@ -38,6 +38,19 @@ M4、M5 是这套设计的核心卖点，也是基线**结构上做不到**的�
 - 本包组 M1 失败或 M2 超范围 → 本包引入的流程反而更差
 - 本包组耗时超过基线 3 倍且指标无提升 → 成本不可接受
 
+## Token 测量
+
+每个 run 脚本都用 `--session-dir` 把该轮的 pi 会话隔离到 `/tmp/<arm>-sessions`，
+跑完自动打印用量表。也可单独统计：
+
+```bash
+node token-usage.mjs /tmp/cairn-hard-baseline-sessions --label="A 原生 pi"
+node token-usage.mjs /tmp/cairn-hard-treatment-sessions --label="B cairn-pi" --json
+```
+
+口径：从 session JSONL 累计每条 assistant 消息的 `usage`（按消息 id 去重）；
+`totalTokens` 直接取 pi 上报值。测试见 [`token-usage.test.mjs`](token-usage.test.mjs)。
+
 ## 复现
 
 ```bash
