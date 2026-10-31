@@ -1,0 +1,5 @@
+node_modules/
+/.cairn/
+*.tmp
+.DS_Store
+dist/

@@ -1,0 +1,12 @@
+{
+  "levels": [
+    { "id": "unit", "required": true, "how": "node --test {tests}", "scope": "node" },
+    { "id": "acceptance", "required": true, "how": "node --test {tests}", "scope": "node" },
+    { "id": "probe", "required": true, "how": "node --test {probes}", "scope": "node" },
+    { "id": "module", "required": true, "how": "npm test", "scope": "integrate" }
+  ],
+  "maxAttempts": 2,
+  "reverifyModule": true,
+  "maxReplansPerModule": 2,
+  "budget": { "maxTotalAttempts": 24, "maxWallClockMinutes": 60 }
+}
